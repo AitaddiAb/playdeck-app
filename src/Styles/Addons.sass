@@ -1,0 +1,59 @@
+/**
+ * Addons Stylesheet
+ *
+ * Addons for the application
+ *
+ * @file Addons.sass
+ * @module AddonsStyles
+ */
+
+@import "Quasar"
+
+/**
+ * Base size for calculations
+ * All size utilities are calculated from this base
+ */
+$base-size: 1rem
+
+/**
+ * Size definitions for border-radius utilities
+ * Maps size names to their rem values
+ */
+$sizes: (none: 0, xs: $base-size * 0.25, sm: $base-size * 0.5, md: $base-size * 1, lg: $base-size * 1.5, xl: $base-size * 2)
+
+/**
+ * Percent definitions for transparency and opacity
+ * Maps percentages to their decimal values
+ */
+$percents: (5: 0.05, 10: 0.1, 20: 0.2, 30: 0.3, 40: 0.4, 50: 0.5, 60: 0.6, 70: 0.7, 80: 0.8, 90: 0.9)
+
+/**
+ * Generate border-radius utility classes
+ * Creates classes like .rounded-xs, .rounded-sm, .rounded-md, etc.
+ * Also generates !important variants (.rounded-xs-f, etc.)
+ */
+@each $key, $val in $sizes
+  .rounded-#{$key}
+    border-radius: $val
+  .rounded-#{$key}-f
+    border-radius: $val !important
+
+/**
+ * Generate transparency and opacity utility classes
+ * Creates background transparency and opacity classes
+ * Adapts to dark/light theme automatically
+ */
+@each $key, $val in $percents
+  /* Semi-transparent background utilities
+   * Light mode: Uses dark-page color with transparency
+   * Dark mode: Uses light-page color with transparency */
+  .bg-transparent-#{$key}
+    background-color: rgba($dark-page, $val)
+  .q-dark, .body--dark
+    .bg-transparent-#{$key}
+      background-color: rgba($light-page, $val)
+
+  /* Opacity utilities
+   * Applies opacity directly to elements */
+  .opacity-#{$key}
+    opacity: $val

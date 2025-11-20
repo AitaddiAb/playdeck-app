@@ -1,0 +1,63 @@
+{
+  "name": "playdeck-app",
+  "version": "0.0.1",
+  "description": "A modern, cross-platform game launcher built with Vue 3, Quasar, and Tauri",
+  "keywords": [
+    "game-launcher",
+    "tauri",
+    "vue3",
+    "quasar",
+    "desktop-app",
+    "cross-platform"
+  ],
+  "author": {
+    "name": "Abderrahim Ait Addi",
+    "url": "https://abdrahim.dev/",
+    "github": "https://github.com/aitaddiab"
+  },
+  "license": "MIT",
+  "private": false,
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aitaddiab/playdeck-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aitaddiab/playdeck-app/issues"
+  },
+  "homepage": "https://github.com/aitaddiab/playdeck-app#readme",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "tauri:serve": "tauri dev",
+    "tauri:debug:win": "tauri build -t x86_64-pc-windows-gnu -d",
+    "tauri:debug:mac": "tauri build -t x86_64-apple-darwin -d",
+    "tauri:build:win": "tauri build -t x86_64-pc-windows-gnu",
+    "tauri:build:mac": "tauri build -t x86_64-apple-darwin",
+    "serve": "vite --host",
+    "build": "vite build",
+    "lint": "eslint . --fix --cache",
+    "format": "prettier --write src/"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.37.0",
+    "@quasar/vite-plugin": "^1.10.0",
+    "@tauri-apps/api": "^2.9.0",
+    "@tauri-apps/cli": "^2.9.4",
+    "@tauri-apps/plugin-os": "^2.3.2",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/eslint-config-prettier": "^10.2.0",
+    "eslint": "^9.37.0",
+    "eslint-plugin-vue": "~10.5.0",
+    "globals": "^16.4.0",
+    "pinia": "^3.0.3",
+    "prettier": "3.6.2",
+    "quasar": "^2.18.6",
+    "sass-embedded": "^1.93.3",
+    "vite": "^7.1.11",
+    "vite-plugin-vue-devtools": "^8.0.3",
+    "vue": "^3.5.22",
+    "vue-router": "^4.6.3"
+  }
+}
