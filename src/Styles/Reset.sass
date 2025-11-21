@@ -10,10 +10,42 @@
 
 /**
  * Global Reset
- * Removes default padding, margin, and sets box-sizing for all elements
+ * Removes default padding, margin.
+ * set box-sizing for all elements.
+ * set cursor to default.
+ * set user-select to none.
  */
 *
-  padding: 0
   margin: 0
+  padding: 0
   box-sizing: border-box
-  user-select: none
+  cursor: default
+  user-select: none !important
+  -webkit-user-select: none !important
+
+/**
+ * Set the html, body, #app to full width, height, overflow, position, and border-radius.
+ */
+html, body
+  width: 100vw
+  height: 100vh
+  overflow: hidden
+  position: relative
+  border-radius: 8pt
+#app
+  width: 100%
+  height: 100%
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+
+/**
+ * Set cursor to pointer for buttons and links.
+ * Set cursor to inherit for all elements inside buttons and links.
+ */
+button, a
+  cursor: pointer
+  & *
+    cursor: inherit

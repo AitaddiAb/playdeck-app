@@ -15,26 +15,67 @@ import { type } from '@tauri-apps/plugin-os'
  * Returns OS type if running in Tauri, otherwise 'browser'
  * @type {string}
  */
-const Platform = isTauri() ? type() : 'browser'
+export const Platform = isTauri() ? type() : 'browser'
 
 /**
- * Platform object to be injected as global property
+ * Check if current platform is desktop
+ * @type {boolean}
  */
-const $a = { Platform }
+export const isDesktop = ['windows', 'macos', 'linux'].includes(Platform)
+
+/**
+ * Check if current platform is mobile
+ * @type {boolean}
+ */
+export const isMobile = ['android', 'ios'].includes(Platform)
+
+/**
+ * Check if current platform is macOS
+ * @type {boolean}
+ */
+export const isMacOS = Platform === 'macos'
+/**
+ * Check if current platform is Windows
+ * @type {boolean}
+ */
+export const isWindows = Platform === 'windows'
+
+/**
+ * Check if current platform is Linux
+ * @type {boolean}
+ */
+export const isLinux = Platform === 'linux'
 
 /**
  * Vue plugin for platform detection
  * Makes platform available in all components via this.$a.Platform
  */
-const platform_install = {
+export default {
   /**
    * Install plugin - registers global properties
    * @param {Object} app - Vue app instance
    */
   install(app) {
-    app.config.globalProperties.$a = $a
+    app.config.globalProperties.$platform = Platform
+    app.config.globalProperties.$isDesktop = isDesktop
+    app.config.globalProperties.$isMobile = isMobile
+    app.config.globalProperties.$isMacOS = isMacOS
+    app.config.globalProperties.$isWindows = isWindows
+    app.config.globalProperties.$isLinux = isLinux
   },
 }
 
-export default platform_install
-export { Platform }
+// Filter Tauri callback warnings
+if (typeof window !== 'undefined') {
+  console._warn = console.warn
+  console.warn = (...args) => {
+    const message = args.join(' ')
+    // Skip Tauri callback warnings
+    if (message.includes('[TAURI]') && message.includes("Couldn't find callback id")) {
+      if (!console._tauri_hmr_warn) {
+        console.log('[hmr] Some async operations lost callback IDs.')
+        console._tauri_hmr_warn = true
+      }
+    } else console._warn(...args)
+  }
+}
