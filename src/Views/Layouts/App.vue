@@ -14,29 +14,29 @@ import '@/Styles/App.sass'
 
 import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
-import { AppWindow } from '@/Utils/WindowControl'
-import { ContextMenu } from '@/Utils/ContextMenu'
 import { isDesktop } from '@/App/Platform'
+import { WindowControl as WC } from '@/Utils/WindowControl'
+import { ContextMenu as CM } from '@/Utils/ContextMenu'
 
 // Setup AppBar context menu
 const AppBarContextMenu = [
-  { label: 'Fullscreen', action: AppWindow.toggleFullscreen },
-  { label: 'Minimize', action: AppWindow.minimize },
-  { label: 'Maximize', action: AppWindow.toggleMaximize },
-  { label: 'Close', action: AppWindow.close },
+  { label: 'Fullscreen', action: WC.toggleFullscreen },
+  { label: 'Minimize', action: WC.minimize },
+  { label: 'Maximize', action: WC.toggleMaximize },
+  { label: 'Close', action: WC.close },
 ]
 
-onMounted(async () => await ContextMenu.add('#AppBar', AppBarContextMenu))
+onMounted(async () => await CM.add('#AppBar', AppBarContextMenu))
 </script>
 
 <template>
   <div id="AppBar" v-if="isDesktop" class="absolute top-0 left-0 right-0 full-width" style="z-index: 1000">
     <!-- Window Controls -->
     <div class="row no-wrap q-gutter-x-xs justify-end q-pa-xs bg-grey-10" data-tauri-drag-region>
-      <QBtn outline dense class="app-w-c" label="-" size="sm" color="primary" @click="AppWindow.minimize()" />
-      <QBtn outline dense class="app-w-c" label="M" size="sm" color="primary" @click="AppWindow.toggleMaximize()" />
-      <QBtn outline dense class="app-w-c" label="F" size="sm" color="primary" @click="AppWindow.toggleFullscreen()" />
-      <QBtn outline dense class="app-w-c" label="X" size="sm" color="negative" @click="AppWindow.close()" />
+      <QBtn outline dense class="app-w-c" label="-" size="sm" color="primary" @click="WC.minimize()" />
+      <QBtn outline dense class="app-w-c" label="M" size="sm" color="primary" @click="WC.toggleMaximize()" />
+      <QBtn outline dense class="app-w-c" label="F" size="sm" color="primary" @click="WC.toggleFullscreen()" />
+      <QBtn outline dense class="app-w-c" label="X" size="sm" color="negative" @click="WC.close()" />
     </div>
   </div>
 

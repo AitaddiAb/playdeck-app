@@ -16,24 +16,23 @@ import { getCurrentWindow } from '@tauri-apps/api/window'
  *
  * @example
  * ```javascript
- * import { AppWindow } from '@/Utils/WindowControl'
+ * import { WindowControl } from '@/Utils/WindowControl'
  *
  * // In a Vue component
- * AppWindow.minimize()
- * AppWindow.maximize()
- * AppWindow.toggleMaximize()
- * AppWindow.close()
- * AppWindow.toggleFullscreen()
+ * WindowControl.minimize()
+ * WindowControl.maximize()
+ * WindowControl.toggleMaximize()
+ * WindowControl.close()
+ * WindowControl.toggleFullscreen()
  * ```
  */
-export const AppWindow = {
+export const WindowControl = {
   /**
    * Minimize the window
    * @returns {Promise<void>}
    */
   async minimize() {
     if (!isDesktop) {
-      console.warn('AppWindow.minimize: Desktop platform is required')
       return
     }
     try {
@@ -50,7 +49,6 @@ export const AppWindow = {
    */
   async maximize() {
     if (!isDesktop) {
-      console.warn('AppWindow.maximize: Desktop platform is required')
       return
     }
     try {
@@ -67,7 +65,6 @@ export const AppWindow = {
    */
   async unmaximize() {
     if (!isDesktop) {
-      console.warn('AppWindow.unmaximize: Desktop platform is required')
       return
     }
     try {
@@ -84,7 +81,6 @@ export const AppWindow = {
    */
   async toggleMaximize() {
     if (!isDesktop) {
-      console.warn('AppWindow.toggleMaximize: Desktop platform is required')
       return
     }
     try {
@@ -101,7 +97,6 @@ export const AppWindow = {
    */
   async close() {
     if (!isDesktop) {
-      console.warn('AppWindow.close: Desktop platform is required')
       return
     }
     try {
@@ -119,7 +114,6 @@ export const AppWindow = {
    */
   async setFullscreen(fullscreen) {
     if (!isDesktop) {
-      console.warn('AppWindow.setFullscreen: Desktop platform is required')
       return
     }
     try {
@@ -136,7 +130,6 @@ export const AppWindow = {
    */
   async toggleFullscreen() {
     if (!isDesktop) {
-      console.warn('AppWindow.toggleFullscreen: Desktop platform is required')
       return
     }
     try {
@@ -182,4 +175,3 @@ export const AppWindow = {
     }
   },
 }
-
