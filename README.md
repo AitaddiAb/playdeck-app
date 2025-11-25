@@ -42,7 +42,7 @@ pnpm tauri:debug:win    # Windows debug build
 
 ## 📚 Documentation
 
-**Contributor documentation** is available in the `docs/` directory. See [DOCUMENTATION.md](./docs/DOCUMENTATION.md) for the complete documentation index.
+**Contributor documentation** is available in the `docs/` directory. See [docs/README.md](./docs/README.md) for the complete documentation index.
 
 The documentation includes:
 
@@ -71,7 +71,12 @@ src/
 ├── Routes/           # Route definitions
 ├── Stores/           # State management (Pinia)
 ├── Styles/           # Styling files (SASS)
+├── Utils/            # Utility functions (WindowControl, ContextMenu)
 └── Views/            # Components, layouts, pages
+    ├── Components/   # Reusable components
+    │   └── App/      # App-specific components (Header, Sidebar, Page, Footer)
+    ├── Layouts/      # Layout components
+    └── Pages/        # Page components
 ```
 
 ## 🤝 Contributing
