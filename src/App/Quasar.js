@@ -27,7 +27,7 @@ const quasar = {
    * @param {Object} app - Vue app instance
    */
   install(app) {
-    app.use(Quasar, { plugins })
+    app.use(Quasar, { plugins, config: { dark: true } })
   },
 }
 

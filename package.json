@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.37.0",
+    "@iconify-prerendered/vue-mingcute": "^0.28.1754900188",
     "@quasar/vite-plugin": "^1.10.0",
     "@tauri-apps/api": "^2.9.0",
     "@tauri-apps/cli": "^2.9.4",

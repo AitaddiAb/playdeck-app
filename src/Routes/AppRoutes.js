@@ -7,6 +7,8 @@
  * @module Routes
  */
 
+import { IconGridLine, IconSettings1Line } from '@iconify-prerendered/vue-mingcute'
+
 /**
  * Application routes array
  * @type {Array<Object>}
@@ -15,11 +17,13 @@ export const routes = [
   {
     path: '/',
     name: 'Dashboard',
-    component: () => import('@/Views/Pages/DashboardPage.vue'),
+    icon: IconGridLine,
+    component: () => import('@/Views/Pages/PageDashboard.vue'),
   },
   {
     path: '/settings',
     name: 'Settings',
-    component: () => import('@/Views/Pages/SettingsPage.vue'),
+    icon: IconSettings1Line,
+    component: () => import('@/Views/Pages/PageSettings.vue'),
   },
 ]

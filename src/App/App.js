@@ -18,12 +18,12 @@ import Platform from './Platform.js'
 import Language from './Language.js'
 
 // Import root component
-import AppLayout from '@/Views/Layouts/App.vue'
+import LayoutApp from '@/Views/Layouts/LayoutApp.vue'
 
 /**
  * Create Vue application instance
  */
-const App = createApp(AppLayout)
+const App = createApp(LayoutApp)
 
 /**
  * Register all plugins and configurations
