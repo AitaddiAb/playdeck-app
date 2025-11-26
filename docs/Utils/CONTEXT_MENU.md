@@ -17,8 +17,9 @@
   - [Different Selectors](#different-selectors)
   - [In Vue Components](#in-vue-components)
 - [Global Context Menu Disabling](#global-context-menu-disabling)
-- [Element Waiting](#element-waiting)
+- [Element Availability](#element-availability)
 - [Menu Item Caching](#menu-item-caching)
+- [Empty Submenu Handling](#empty-submenu-handling)
 - [HMR Warnings](#hmr-warnings)
 - [Dependencies](#dependencies)
 - [Related Documentation](#related-documentation)
@@ -33,7 +34,8 @@ Creates native Tauri context menus that appear when right-clicking on specific e
 - Global context menu disabling
 - Selective enablement for specific elements
 - Supports any CSS selector
-- Automatic element waiting (for dynamic elements)
+- Submenu support with nested items
+- Empty submenu handling (shows disabled "Nothing there" item)
 - Menu item caching and management
 
 ## API
@@ -48,6 +50,12 @@ Add context menu items to an element.
   - `label` (string): Menu item label
   - `action` (Function): Menu item action callback
   - `id` (string, optional): Menu item ID (auto-generated from label if not provided)
+  - `type` (string, optional): Set to `'PredefinedMenuItem'` to create a predefined menu item (e.g., separator) or `'Submenu'` to create a submenu
+  - `options` (Object, optional): Options for PredefinedMenuItem (required when `type` is `'PredefinedMenuItem'`)
+    - `item` (string): Predefined item type (e.g., `'Separator'`)
+    - `text` (string, optional): Text for the predefined item
+  - `text` (string, optional): Submenu text (required when `type` is `'Submenu'`)
+  - `items` (Array, optional): Array of menu items for submenu (required when `type` is `'Submenu'`)
 
 **Returns**: `Promise<void>`
 
@@ -74,6 +82,72 @@ await ContextMenu.add('#myElement', [
   { label: 'Option 1', action: () => console.log('Option 1') },
   { label: 'Option 2', action: () => console.log('Option 2') },
   { label: 'Option 3', action: () => console.log('Option 3') }
+])
+```
+
+### Adding Separators
+
+Separators can be added between menu items using PredefinedMenuItem:
+
+```javascript
+await ContextMenu.add('#myElement', [
+  { label: 'Option 1', action: () => console.log('Option 1') },
+  { 
+    type: 'PredefinedMenuItem', 
+    options: { text: 'separator-text', item: 'Separator' } 
+  },
+  { label: 'Option 2', action: () => console.log('Option 2') }
+])
+```
+
+### Adding Submenus
+
+Submenus allow you to group menu items under categories. Submenus can contain regular items, separators, and even nested submenus:
+
+```javascript
+await ContextMenu.add('#myElement', [
+  { label: 'Play', action: () => console.log('Play') },
+  {
+    type: 'Submenu',
+    text: 'Actions',
+    items: [
+      { label: 'Action 1', action: () => console.log('Action 1') },
+      { label: 'Action 2', action: () => console.log('Action 2') }
+    ]
+  }
+])
+```
+
+**Example with nested structure:**
+```javascript
+await ContextMenu.add('#myElement', [
+  { label: 'Play', action: () => console.log('Play') },
+  {
+    type: 'Submenu',
+    text: 'Actions',
+    items: [
+      { label: 'Action 1', action: () => console.log('Action 1') },
+      { 
+        type: 'PredefinedMenuItem', 
+        options: { text: 'separator-text', item: 'Separator' } 
+      },
+      { label: 'Action 2', action: () => console.log('Action 2') }
+    ]
+  }
+])
+```
+
+**Empty Submenu Handling:**
+If a submenu has no items (empty array), it will automatically display a disabled "Nothing there" item:
+
+```javascript
+// Empty submenu will show "Nothing there" (disabled)
+await ContextMenu.add('#myElement', [
+  {
+    type: 'Submenu',
+    text: 'Actions',
+    items: [] // Empty array
+  }
 ])
 ```
 
@@ -127,13 +201,15 @@ onMounted(async () => {
 
 The utility automatically disables the default browser context menu globally. Only elements registered with `ContextMenu.add()` will show a context menu when right-clicked.
 
-## Element Waiting
+## Element Availability
 
-If an element doesn't exist when `ContextMenu.add()` is called, the utility will wait up to 5 seconds for the element to appear in the DOM. This is useful for dynamically rendered elements.
+`ContextMenu.add()` expects the element to exist in the DOM when called. It should be called from `onMounted()` lifecycle hook in Vue components to ensure the element is available.
 
 ```javascript
-// This will wait for the element to appear
-await ContextMenu.add('#dynamicElement', items)
+// In Vue component
+onMounted(async () => {
+  await ContextMenu.add('#myElement', items)
+})
 ```
 
 ## Menu Item Caching
@@ -154,6 +230,23 @@ await ContextMenu.add('#myElement', [
 // Result: Menu with both Option 1 and Option 2
 ```
 
+## Empty Submenu Handling
+
+If a submenu is created with an empty `items` array (length < 1), the utility automatically adds a disabled "Nothing there" menu item to prevent empty submenus:
+
+```javascript
+// This will show "Nothing there" (disabled) in the submenu
+await ContextMenu.add('#myElement', [
+  {
+    type: 'Submenu',
+    text: 'Actions',
+    items: [] // Empty array triggers the "Nothing there" item
+  }
+])
+```
+
+This ensures that submenus always have at least one item, providing better UX by showing a clear indication when there are no actions available.
+
 ## HMR Warnings
 
 During development, you may see "Couldn't find callback id" warnings when the page reloads. These are:
@@ -172,7 +265,7 @@ We cannot prevent them from JavaScript because Rust callbacks cannot be cancelle
 ## Dependencies
 
 - `@/App/Platform`: Platform detection (`isDesktop`)
-- `@tauri-apps/api/menu`: Tauri menu API (`Menu`, `MenuItem`)
+- `@tauri-apps/api/menu`: Tauri menu API (`Menu`, `MenuItem`, `PredefinedMenuItem`, `Submenu`)
 
 ## Related Documentation
 

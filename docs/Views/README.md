@@ -42,12 +42,20 @@ src/Views/
 
 ## Components
 
-All app-specific components are located in `src/Views/Components/App/` and documented individually:
+Reusable components are located in `src/Views/Components/`:
+
+### App Components
+
+App-specific components in `src/Views/Components/App/`:
 
 - **[AppHeader](./Components/APP_HEADER.md)** - Top header bar with window controls
 - **[AppSidebar](./Components/APP_SIDEBAR.md)** - Left sidebar with navigation and window controls
 - **[AppPage](./Components/APP_PAGE.md)** - Main page container with router view
 - **[AppFooter](./Components/APP_FOOTER.md)** - Bottom footer component
+
+### Game Components
+
+- **[GameCard](./Components/GAME_CARD.md)** - Game card component with context menu support
 
 ## Layouts
 

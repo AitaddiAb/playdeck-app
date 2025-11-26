@@ -23,6 +23,7 @@ This directory includes reusable utilities that provide common functionality:
 
 - **[WINDOW_CONTROL.md](./WINDOW_CONTROL.md)** - `WindowControl.js` - Tauri window control utility
 - **[CONTEXT_MENU.md](./CONTEXT_MENU.md)** - `ContextMenu.js` - Native context menu utility
+- **[FILE_MANAGER.md](./FILE_MANAGER.md)** - `FileManager.js` - File system operations utility
 
 ## Usage
 
@@ -31,6 +32,7 @@ All utilities can be imported directly:
 ```javascript
 import { WindowControl } from '@/Utils/WindowControl'
 import { ContextMenu } from '@/Utils/ContextMenu'
+import { ReadDir, FindFile, OpenFile } from '@/Utils/FileManager'
 ```
 
 ## Dependencies
