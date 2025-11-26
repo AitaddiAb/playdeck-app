@@ -8,7 +8,8 @@
  */
 
 import { createPinia } from 'pinia'
-// import { useAppStore } from '@/stores/App/AppStore.js'
+import { useSettingsStore } from '@/Stores/SettingsStore.js'
+import { useGamesStore } from '@/Stores/GamesStore.js'
 
 /**
  * Create and initialize Pinia instance
@@ -21,8 +22,10 @@ const Store = createPinia()
  * These are singleton instances that can be imported and used throughout the app
  */
 
-/** @type {Object} App store - Manages app-level state (UI, client ID) */
-// export const AppStore = useAppStore(Store)
+/** @type {Object} Settings store - Manages application settings */
+export const SettingsStore = useSettingsStore(Store)
+/** @type {Object} Games store - Manages game discovery and launching */
+export const GamesStore = useGamesStore(Store)
 
 /**
  * Export Pinia instance for Vue app registration

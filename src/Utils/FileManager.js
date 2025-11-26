@@ -1,0 +1,180 @@
+/**
+ * File Manager Utility
+ *
+ * Provides file system operations for reading directories and finding files.
+ *
+ * @module FileManager
+ */
+
+import { readDir } from '@tauri-apps/plugin-fs'
+import { openPath } from '@tauri-apps/plugin-opener'
+
+/**
+ * Read directory and return array of subdirectory relative paths
+ * @param {Object} options - Options object
+ * @param {string} options.path - Directory path to read
+ * @returns {Promise<Array<string>>} Array of subdirectory relative paths (directory names)
+ */
+export const ReadDir = async (options) => {
+  const { path } = options || {}
+  if (!path) return []
+
+  try {
+    const entries = await readDir(path)
+    const dirs = []
+
+    for (const entry of entries) {
+      // Only include directories, skip hidden directories
+      if (entry.isDirectory && !entry.name.startsWith('.')) {
+        // Return just the directory name (relative path)
+        dirs.push(entry.name)
+      }
+    }
+
+    return dirs
+  } catch (error) {
+    console.error(`Error reading directory ${path}:`, error)
+    return []
+  }
+}
+
+/**
+ * Find files matching extensions in a directory
+ * @param {Object} options - Options object
+ * @param {string} options.path - Directory path to search
+ * @param {string|Array<string>} options.extensions - File extensions to match (e.g., ".exe", ".bat" or ".exe,.bat" or [".exe", ".bat"])
+ * @param {string|Array<string>} [options.exclusions] - Words to exclude files containing these words (e.g., "crash,PrereqSetup" or ["crash", "PrereqSetup"])
+ * @param {boolean} [options.recursive=false] - Whether to search subdirectories recursively (default: false)
+ * @returns {Promise<Array<string>>} Array of relative file paths from the search path
+ */
+export const FindFile = async (options) => {
+  const { path, extensions, exclusions, recursive = false } = options || {}
+  if (!path || !extensions) return []
+
+  // Normalize extensions: convert string to array, handle comma-separated values
+  let extensionsArray = []
+  if (typeof extensions === 'string') {
+    extensionsArray = extensions
+      .split(',')
+      .map((e) => e.trim())
+      .filter((e) => e.length > 0)
+  } else if (Array.isArray(extensions)) {
+    extensionsArray = extensions.map((e) => (typeof e === 'string' ? e.trim() : String(e))).filter((e) => e.length > 0)
+  }
+
+  if (extensionsArray.length === 0) return []
+
+  // Normalize extensions to lowercase for case-insensitive matching
+  const normalizedExtensions = extensionsArray.map((e) => e.toLowerCase())
+
+  // Normalize exclusions: convert string to array, handle comma-separated values
+  let exclusionsArray = []
+  if (exclusions) {
+    if (typeof exclusions === 'string') {
+      exclusionsArray = exclusions
+        .split(',')
+        .map((e) => e.trim())
+        .filter((e) => e.length > 0)
+    } else if (Array.isArray(exclusions)) {
+      exclusionsArray = exclusions
+        .map((e) => (typeof e === 'string' ? e.trim() : String(e)))
+        .filter((e) => e.length > 0)
+    }
+  }
+
+  // Normalize exclusions to lowercase for case-insensitive matching
+  const normalizedExclusions = exclusionsArray.map((e) => e.toLowerCase())
+
+  /**
+   * Check if file should be excluded based on exclusion words
+   * @param {string} filePath - Full file path
+   * @param {string} fileName - File name
+   * @returns {boolean} True if file should be excluded
+   */
+  const shouldExclude = (filePath, fileName) => {
+    if (normalizedExclusions.length === 0) return false
+
+    const lowerPath = filePath.toLowerCase()
+    const lowerName = fileName.toLowerCase()
+
+    // Check if any exclusion word is contained in the path or filename
+    return normalizedExclusions.some((exclusion) => lowerPath.includes(exclusion) || lowerName.includes(exclusion))
+  }
+
+  /**
+   * Recursively search for files matching the pattern
+   * @param {string} dirPath - Directory path to search
+   * @param {string} basePath - Base path for calculating relative paths
+   * @param {Array<string>} foundFiles - Array to collect found file paths
+   * @param {number} currentDepth - Current depth level
+   */
+  const searchFiles = async (dirPath, basePath, foundFiles = [], currentDepth = 0) => {
+    try {
+      const entries = await readDir(dirPath)
+
+      for (const entry of entries) {
+        // Skip hidden files/directories
+        if (entry.name.startsWith('.')) {
+          continue
+        }
+
+        // Join path (Tauri normalizes paths, so '/' works on all platforms)
+        const separator = dirPath.endsWith('/') || dirPath.endsWith('\\') ? '' : '/'
+        const entryPath = `${dirPath}${separator}${entry.name}`
+
+        if (entry.isDirectory) {
+          // Search subdirectories if recursive mode is enabled
+          if (recursive) {
+            await searchFiles(entryPath, basePath, foundFiles, currentDepth + 1)
+          }
+        } else {
+          // Check if file should be excluded
+          if (shouldExclude(entryPath, entry.name)) {
+            continue
+          }
+
+          // Check if file matches any of the extensions
+          const fileName = entry.name.toLowerCase()
+          const matchesExtension = normalizedExtensions.some((ext) => fileName.endsWith(ext))
+          if (matchesExtension) {
+            // Calculate relative path from basePath
+            const relativePath = entryPath.replace(basePath + '/', '').replace(basePath + '\\', '')
+            foundFiles.push(relativePath)
+          }
+        }
+      }
+    } catch (error) {
+      console.error(`Error reading directory ${dirPath}:`, error)
+    }
+
+    return foundFiles
+  }
+
+  try {
+    const foundFiles = await searchFiles(path, path, [], 0)
+    return foundFiles
+  } catch (error) {
+    console.error(`Error finding files in ${path}:`, error)
+    return []
+  }
+}
+
+/**
+ * Open a file using the system's default application
+ * @param {Object} options - Options object
+ * @param {string} options.path - Full path to the file to open
+ * @returns {Promise<void>}
+ */
+export const OpenFile = async (options) => {
+  const { path } = options || {}
+  if (!path) {
+    throw new Error('Path is required to open file')
+  }
+
+  try {
+    await openPath(path)
+  } catch (error) {
+    console.error(`Error opening file ${path}:`, error)
+    throw error
+  }
+}

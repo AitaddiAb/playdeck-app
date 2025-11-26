@@ -8,14 +8,21 @@
  * @component LayoutApp
  */
 
-// Import global styles
-import 'quasar/src/css/index.sass'
-import '@/Styles/App.sass'
-
 import AppHeader from '@/Views/Components/App/AppHeader.vue'
 import AppSidebar from '@/Views/Components/App/AppSidebar.vue'
 import AppPage from '@/Views/Components/App/AppPage.vue'
 // import AppFooter from '@/Views/Components/App/AppFooter.vue'
+
+import { GamesStore } from '@/App/Store.js'
+import { onMounted } from 'vue'
+
+// Import global styles
+import 'quasar/src/css/index.sass'
+import '@/Styles/App.sass'
+
+onMounted(() => {
+  GamesStore.LoadGames()
+})
 </script>
 
 <template>

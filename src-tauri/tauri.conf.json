@@ -5,7 +5,7 @@
   "identifier": "dev.abdrahim.playdeck",
   "build": {
     "frontendDist": "../build/spa",
-    "devUrl": "http://localhost:3000",
+    "devUrl": "http://localhost:3900",
     "beforeDevCommand": "pnpm serve",
     "beforeBuildCommand": "pnpm build"
   },

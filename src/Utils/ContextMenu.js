@@ -50,7 +50,7 @@
  */
 
 import { isDesktop } from '@/App/Platform'
-import { Menu, MenuItem } from '@tauri-apps/api/menu'
+import { Menu, MenuItem, PredefinedMenuItem, Submenu } from '@tauri-apps/api/menu'
 
 // Store created menus and their items
 const menuCache = new Map()
@@ -94,8 +94,8 @@ const add = async (selector, items) => {
     let menuData = menuCache.get(normalizedSelector)
 
     if (!menuData) {
-      // Wait for element to be available in DOM
-      const element = await waitForElement(normalizedSelector)
+      // Get element directly (should exist when called from onMounted)
+      const element = document.querySelector(normalizedSelector)
       if (!element) {
         throw new Error(`Element with selector "${normalizedSelector}" not found`)
       }
@@ -144,16 +144,57 @@ const add = async (selector, items) => {
       }
     }
 
+    /**
+     * Recursively create menu items (handles submenus)
+     * @param {Array} items - Array of menu item definitions
+     * @returns {Promise<Array>} Array of created menu items
+     */
+    const createMenuItems = async (items) => {
+      return await Promise.all(
+        items.map(async (item) => {
+          // Check if this is a PredefinedMenuItem (e.g., separator)
+          if (item.type === 'PredefinedMenuItem' && item.options) {
+            return await PredefinedMenuItem.new(item.options)
+          }
+
+          // Check if this is a Submenu
+          if (item.type === 'Submenu' && item.text && item.items) {
+            // Check if submenu has items, if not add "Empty" item
+            if (item.items.length < 1) {
+              return await Submenu.new({
+                text: item.text,
+                items: [
+                  await MenuItem.new({
+                    id: 'empty',
+                    text: 'Nothing there',
+                    enabled: false,
+                    action: () => {},
+                  }),
+                ],
+              })
+            }
+
+            // Recursively create submenu items
+            const submenuItems = await createMenuItems(item.items)
+
+            return await Submenu.new({
+              text: item.text,
+              items: submenuItems,
+            })
+          }
+
+          // Regular menu item
+          return await MenuItem.new({
+            id: item.id || item.label.toLowerCase().replace(/\s+/g, '-'),
+            text: item.label,
+            action: item.action,
+          })
+        }),
+      )
+    }
+
     // Create new menu items
-    const newMenuItems = await Promise.all(
-      itemsArray.map(async (item) => {
-        return await MenuItem.new({
-          id: item.id || item.label.toLowerCase().replace(/\s+/g, '-'),
-          text: item.label,
-          action: item.action,
-        })
-      }),
-    )
+    const newMenuItems = await createMenuItems(itemsArray)
 
     // Add new items to existing items
     menuData.items.push(...newMenuItems)
@@ -166,43 +207,6 @@ const add = async (selector, items) => {
     console.error(`Failed to add context menu item(s) for selector "${selector}":`, error)
     throw error
   }
-}
-
-/**
- * Wait for an element to be available in the DOM
- * @param {string} selector - CSS selector
- * @param {number} timeout - Maximum time to wait in milliseconds
- * @returns {Promise<HTMLElement|null>}
- */
-const waitForElement = (selector, timeout = 5000) => {
-  return new Promise((resolve) => {
-    // Check if element already exists
-    const element = document.querySelector(selector)
-    if (element) {
-      resolve(element)
-      return
-    }
-
-    // Wait for element to appear
-    const observer = new MutationObserver((mutations, obs) => {
-      const element = document.querySelector(selector)
-      if (element) {
-        obs.disconnect()
-        resolve(element)
-      }
-    })
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    })
-
-    // Timeout fallback
-    setTimeout(() => {
-      observer.disconnect()
-      resolve(null)
-    }, timeout)
-  })
 }
 
 /**

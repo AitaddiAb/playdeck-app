@@ -61,5 +61,10 @@
     "vite-plugin-vue-devtools": "^8.0.3",
     "vue": "^3.5.22",
     "vue-router": "^4.6.3"
+  },
+  "dependencies": {
+    "@tauri-apps/plugin-dialog": "~2.4.2",
+    "@tauri-apps/plugin-fs": "~2.4.4",
+    "@tauri-apps/plugin-opener": "~2.5.2"
   }
 }
