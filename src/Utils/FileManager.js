@@ -6,7 +6,7 @@
  * @module FileManager
  */
 
-import { readDir } from '@tauri-apps/plugin-fs'
+import { readDir, readTextFile, writeTextFile, mkdir } from '@tauri-apps/plugin-fs'
 import { openPath } from '@tauri-apps/plugin-opener'
 
 /**
@@ -156,6 +156,86 @@ export const FindFile = async (options) => {
   } catch (error) {
     console.error(`Error finding files in ${path}:`, error)
     return []
+  }
+}
+
+/**
+ * Read a text file and return its contents
+ * @param {Object} options - Options object
+ * @param {string} options.path - Full path to the file to read
+ * @returns {Promise<string>} File contents as string
+ */
+export const ReadFile = async (options) => {
+  const { path } = options || {}
+  if (!path) {
+    throw new Error('Path is required to read file')
+  }
+
+  try {
+    const contents = await readTextFile(path)
+    return contents
+  } catch (error) {
+    // Check if it's a "file not found" error - don't log these as they're often expected
+    const errorMessage = error.message || String(error)
+    const errorCode = error.code || ''
+    const errorString = String(error).toLowerCase()
+
+    const isFileNotFound =
+      errorCode === 'ENOENT' ||
+      errorMessage.includes('not found') ||
+      errorMessage.includes('No such file') ||
+      errorMessage.includes('No such file or directory') ||
+      errorString.includes('no such file') ||
+      errorString.includes('not found') ||
+      errorString.includes('os error 2')
+
+    // Only log non-"file not found" errors
+    if (!isFileNotFound) {
+      console.error(`Error reading file ${path}:`, error)
+    }
+    throw error
+  }
+}
+
+/**
+ * Write text content to a file
+ * @param {Object} options - Options object
+ * @param {string} options.path - Full path to the file to write
+ * @param {string} options.contents - Text content to write
+ * @returns {Promise<void>}
+ */
+export const WriteFile = async (options) => {
+  const { path, contents } = options || {}
+  if (!path) {
+    throw new Error('Path is required to write file')
+  }
+  if (contents === undefined) {
+    throw new Error('Contents is required to write file')
+  }
+
+  try {
+    // Extract directory path from file path
+    const pathParts = path.split(/[/\\]/)
+    pathParts.pop() // Remove filename
+    const dirPath = pathParts.join('/')
+
+    // Create directory if it doesn't exist
+    if (dirPath) {
+      try {
+        await mkdir(dirPath, { recursive: true })
+      } catch (mkdirError) {
+        // Directory might already exist, ignore error
+        if (mkdirError.code !== 'EEXIST') {
+          console.warn(`Warning creating directory ${dirPath}:`, mkdirError)
+        }
+      }
+    }
+
+    // Write file
+    await writeTextFile(path, contents)
+  } catch (error) {
+    console.error(`Error writing file ${path}:`, error)
+    throw error
   }
 }
 

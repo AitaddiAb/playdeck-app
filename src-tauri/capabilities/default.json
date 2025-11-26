@@ -19,6 +19,8 @@
     "core:webview:allow-internal-toggle-devtools",
     "fs:default",
     "fs:allow-read-dir",
+    "fs:allow-write-text-file",
+    "fs:allow-mkdir",
     {
       "identifier": "fs:scope",
       "allow": [

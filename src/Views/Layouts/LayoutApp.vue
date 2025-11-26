@@ -11,6 +11,7 @@
 import AppHeader from '@/Views/Components/App/AppHeader.vue'
 import AppSidebar from '@/Views/Components/App/AppSidebar.vue'
 import AppPage from '@/Views/Components/App/AppPage.vue'
+import GameMetadataDialog from '@/Views/Components/GameMetadataDialog.vue'
 // import AppFooter from '@/Views/Components/App/AppFooter.vue'
 
 import { GamesStore } from '@/App/Store.js'
@@ -32,6 +33,8 @@ onMounted(() => {
     <AppSidebar />
 
     <AppPage />
+
+    <GameMetadataDialog />
 
     <!-- <AppFooter /> -->
   </QLayout>

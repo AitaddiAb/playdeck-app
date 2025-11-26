@@ -1,64 +1,18 @@
 /**
- * Reusable Context Menu Utility
+ * Context Menu Utility
  *
- * Creates a Tauri native context menu for a specific element.
- * The context menu will only appear when right-clicking on the specified element.
+ * Creates Tauri native context menus for specific elements.
+ * Follows Tauri documentation: https://tauri.app/learn/window-menu/
  *
  * @module ContextMenu
- *
- * @description
- * **Note on Tauri callback warnings during HMR:**
- * You may see warnings like "Couldn't find callback id" during development when the page reloads.
- * This happens because:
- * 1. MenuItem.new() and Menu.new() create async callbacks in Rust
- * 2. When the page reloads (HMR), the JavaScript context resets
- * 3. Rust tries to call back to JavaScript, but the callback IDs no longer exist
- *
- * These warnings are:
- * - Harmless (don't affect functionality)
- * - Development-only (won't appear in production)
- * - Expected behavior with Tauri + HMR
- *
- * We cannot prevent them from JavaScript because Rust callbacks cannot be cancelled.
- *
- * @example
- * ```javascript
- * import { ContextMenu } from '@/Utils/ContextMenu'
- * import { isDesktop } from '@/App/Platform'
- *
- * if (isDesktop) {
- *   // Add multiple items at once (supports any CSS selector)
- *   await ContextMenu.add('#myElement', [
- *     { label: 'Option 1', action: () => console.log('Option 1 clicked') },
- *     { label: 'Option 2', action: () => console.log('Option 2 clicked') }
- *   ])
- *
- *   // Class selector
- *   await ContextMenu.add('.my-class', { label: 'Option', action: () => console.log('Clicked') })
- *
- *   // Tag selector
- *   await ContextMenu.add('button', { label: 'Option', action: () => console.log('Clicked') })
- *
- *   // Complex selector
- *   await ContextMenu.add('#app .menus', { label: 'Option', action: () => console.log('Clicked') })
- *
- *   // Or add items one by one
- *   await ContextMenu.add('#myElement', { label: 'Option 1', action: () => console.log('Option 1') })
- *   await ContextMenu.add('#myElement', { label: 'Option 2', action: () => console.log('Option 2') })
- * }
- * ```
  */
 
 import { isDesktop } from '@/App/Platform'
 import { Menu, MenuItem, PredefinedMenuItem, Submenu } from '@tauri-apps/api/menu'
 
-// Store created menus and their items
 const menuCache = new Map()
-
-// Track if global context menu disable is set up
 let globalDisableSetup = false
 
-// Global handler to disable context menu everywhere except registered elements
 const globalContextMenuHandler = (event) => {
   const isRegisteredElement = Array.from(menuCache.values()).some(
     ({ element }) => element && (event.target === element || element.contains(event.target)),
@@ -71,147 +25,126 @@ const globalContextMenuHandler = (event) => {
 }
 
 /**
- * Add menu items to a context menu for a specific element
- * @param {string} selector - CSS selector (e.g., "#id", ".class", "tag", "#app .menus")
- * @param {Object|Array} items - Single menu item object or array of menu items
- * @param {string} items[].label - Menu item label
- * @param {Function} items[].action - Menu item action callback
- * @returns {Promise<void>} Promise that resolves when the menu item(s) are added
+ * Create menu items from item definitions
+ * @param {Array} items - Array of menu item definitions
+ * @returns {Promise<Array>} Array of created menu items
  */
-const add = async (selector, items) => {
-  if (!isDesktop) {
-    console.warn('ContextMenu.add: Desktop platform is required')
-    return
-  }
+const createMenuItems = async (items) => {
+  return await Promise.all(
+    items.map(async (item) => {
+      // Separator
+      if (item.type === 'Separator') {
+        return await PredefinedMenuItem.new({ text: 'separator-text', item: 'Separator' })
+      }
+
+      // Submenu
+      if (item.type === 'Submenu') {
+        const emptyItem = { id: 'empty', text: 'Nothing there', enabled: false, action: () => {} }
+        const submenuItems = await createMenuItems(item.items && item.items.length > 0 ? item.items : [emptyItem])
+
+        return await Submenu.new({ text: item.text, items: submenuItems })
+      }
+
+      // Regular menu item
+      return await MenuItem.new({
+        id: item.id,
+        text: item.label,
+        action: item.action || (() => {}),
+        enabled: item.enabled !== undefined ? item.enabled : true,
+      })
+    }),
+  )
+}
+
+/**
+ * Create or replace context menu for a selector
+ * @param {string} selector - CSS selector
+ * @param {Array} items - Array of menu item definitions
+ * @returns {Promise<void>}
+ */
+const create = async (selector, items) => {
+  if (!isDesktop) return
 
   const normalizedSelector = selector.trim()
+  const element = document.querySelector(normalizedSelector)
+  if (!element) {
+    throw new Error(`Element with selector "${normalizedSelector}" not found`)
+  }
 
-  // Normalize items to array
-  const itemsArray = Array.isArray(items) ? items : [items]
+  // Create menu items
+  const menuItems = await createMenuItems(items)
 
-  try {
-    // Get or create menu cache entry (use selector as key)
-    let menuData = menuCache.get(normalizedSelector)
+  // Create menu
+  const menu = await Menu.new({ items: menuItems })
 
-    if (!menuData) {
-      // Get element directly (should exist when called from onMounted)
-      const element = document.querySelector(normalizedSelector)
-      if (!element) {
-        throw new Error(`Element with selector "${normalizedSelector}" not found`)
-      }
-
-      // Create empty menu initially
-      const tauriMenu = await Menu.new({ items: [] })
-
-      // Store in cache first so handler can reference it
-      menuData = {
-        menu: tauriMenu,
-        handler: null,
-        element: element,
-        items: [],
-      }
-      menuCache.set(normalizedSelector, menuData)
-
-      // Create context menu handler for this element
-      const handleContextMenu = async (event) => {
-        const target = event.target
-
-        if (element && (target === element || element.contains(target))) {
-          event.preventDefault()
-          event.stopPropagation()
-
-          try {
-            const currentMenuData = menuCache.get(normalizedSelector)
-            if (currentMenuData?.menu) {
-              await currentMenuData.menu.popup()
-            }
-          } catch (error) {
-            console.error(`Failed to show context menu for ${normalizedSelector}:`, error)
-          }
-        }
-      }
-
-      // Store handler reference
-      menuData.handler = handleContextMenu
-
-      // Add event listener for this specific element (capture phase to run before global handler)
-      document.addEventListener('contextmenu', handleContextMenu, true)
-
-      // Setup global context menu disable if not already done
-      if (!globalDisableSetup) {
-        document.addEventListener('contextmenu', globalContextMenuHandler, true)
-        globalDisableSetup = true
+  // Create context menu handler
+  const handleContextMenu = async (event) => {
+    if (element && (event.target === element || element.contains(event.target))) {
+      event.preventDefault()
+      event.stopPropagation()
+      try {
+        await menu.popup()
+      } catch (error) {
+        console.error(`Failed to show context menu for ${normalizedSelector}:`, error)
       }
     }
+  }
 
-    /**
-     * Recursively create menu items (handles submenus)
-     * @param {Array} items - Array of menu item definitions
-     * @returns {Promise<Array>} Array of created menu items
-     */
-    const createMenuItems = async (items) => {
-      return await Promise.all(
-        items.map(async (item) => {
-          // Check if this is a PredefinedMenuItem (e.g., separator)
-          if (item.type === 'PredefinedMenuItem' && item.options) {
-            return await PredefinedMenuItem.new(item.options)
-          }
+  // Store in cache
+  menuCache.set(normalizedSelector, {
+    menu,
+    element,
+    handler: handleContextMenu,
+  })
 
-          // Check if this is a Submenu
-          if (item.type === 'Submenu' && item.text && item.items) {
-            // Check if submenu has items, if not add "Empty" item
-            if (item.items.length < 1) {
-              return await Submenu.new({
-                text: item.text,
-                items: [
-                  await MenuItem.new({
-                    id: 'empty',
-                    text: 'Nothing there',
-                    enabled: false,
-                    action: () => {},
-                  }),
-                ],
-              })
-            }
+  // Add event listener
+  document.addEventListener('contextmenu', handleContextMenu, true)
 
-            // Recursively create submenu items
-            const submenuItems = await createMenuItems(item.items)
-
-            return await Submenu.new({
-              text: item.text,
-              items: submenuItems,
-            })
-          }
-
-          // Regular menu item
-          return await MenuItem.new({
-            id: item.id || item.label.toLowerCase().replace(/\s+/g, '-'),
-            text: item.label,
-            action: item.action,
-          })
-        }),
-      )
-    }
-
-    // Create new menu items
-    const newMenuItems = await createMenuItems(itemsArray)
-
-    // Add new items to existing items
-    menuData.items.push(...newMenuItems)
-
-    // Recreate menu with all items
-    menuData.menu = await Menu.new({
-      items: menuData.items,
-    })
-  } catch (error) {
-    console.error(`Failed to add context menu item(s) for selector "${selector}":`, error)
-    throw error
+  // Setup global disable if not already done
+  if (!globalDisableSetup) {
+    document.addEventListener('contextmenu', globalContextMenuHandler, true)
+    globalDisableSetup = true
   }
 }
 
 /**
- * Context Menu API
+ * Update existing menu items by ID
+ * @param {string} selector - CSS selector
+ * @param {Array} items - Array of menu item definitions with IDs to update
+ * @returns {Promise<void>}
  */
+const update = async (selector, items) => {
+  if (!isDesktop) return
+
+  const normalizedSelector = selector.trim()
+  const menuData = menuCache.get(normalizedSelector)
+  if (!menuData || !menuData.menu) {
+    throw new Error(`Menu not found for selector "${normalizedSelector}". Call create() first.`)
+  }
+
+  const menu = menuData.menu
+
+  // Update each item by ID
+  for (const item of items) {
+    if (!item.id) continue
+
+    try {
+      const menuItem = await menu.get(item.id)
+      if (!menuItem) continue
+
+      if (item.label !== undefined) {
+        await menuItem.setText(item.label)
+      }
+      if (item.enabled !== undefined) {
+        await menuItem.setEnabled(item.enabled)
+      }
+    } catch (error) {
+      console.error(`Failed to update menu item ${item.id}:`, error)
+    }
+  }
+}
+
 export const ContextMenu = {
-  add,
+  create,
+  update,
 }

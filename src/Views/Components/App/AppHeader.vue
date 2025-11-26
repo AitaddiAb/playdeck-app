@@ -16,15 +16,15 @@ import { IconTriangleLine } from '@iconify-prerendered/vue-mingcute'
 
 // Setup AppBar context menu
 const AppBarContextMenu = [
-  { label: 'Fullscreen', action: WindowControl.toggleFullscreen },
-  { label: 'Minimize', action: WindowControl.minimize },
-  { label: 'Maximize', action: WindowControl.toggleMaximize },
-  { label: 'Close', action: WindowControl.close },
+  { id: 'fullscreen', label: 'Fullscreen', action: WindowControl.toggleFullscreen },
+  { id: 'minimize', label: 'Minimize', action: WindowControl.minimize },
+  { id: 'maximize', label: 'Maximize', action: WindowControl.toggleMaximize },
+  { id: 'close', label: 'Close', action: WindowControl.close },
 ]
 
 onMounted(async () => {
   if (isDesktop) {
-    await ContextMenu.add('#AppBar', AppBarContextMenu)
+    await ContextMenu.create('#AppBar', AppBarContextMenu)
   }
 })
 </script>
