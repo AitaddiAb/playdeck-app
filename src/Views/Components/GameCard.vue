@@ -114,7 +114,7 @@ onMounted(async () => {
 
 <template>
   <div class="game-card-wrapper" :style="{ width: `${ui_card_width}px` }">
-    <QCard :id="`game-card-${props.game.id}`" class="game-card" flat bordered @click="PlayDefaultAction">
+    <QCard :id="`game-card-${props.game.id}`" class="game-card" flat bordered @dblclick="PlayDefaultAction">
       <QCardSection>
         <div class="text-h6">{{ props.game.name }}</div>
         <div class="text-caption text-grey-4 q-mt-sm">
