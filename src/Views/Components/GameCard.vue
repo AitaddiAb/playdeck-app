@@ -114,17 +114,18 @@ onMounted(async () => {
 
 <template>
   <div class="game-card-wrapper" :style="{ width: `${ui_card_width}px` }">
-    <QCard :id="`game-card-${props.game.id}`" class="game-card" flat bordered @dblclick="PlayDefaultAction">
+    <QCard
+      :id="`game-card-${game.id}`"
+      class="game-card"
+      flat
+      bordered
+      @dblclick="PlayDefaultAction"
+      :style="`background-image: url(${game.images?.vertical_cover})`"
+    >
       <QCardSection>
-        <div class="text-h6">{{ props.game.name }}</div>
+        <div class="text-h6" v-show="!game.images?.vertical_cover">{{ game.name }}</div>
         <div class="text-caption text-grey-4 q-mt-sm">
-          <QBadge color="red-4" label="No Default Action" v-if="props.game.actions.default === null" />
-          <div v-show="props.game.developer">Developer: {{ props.game.developer }}</div>
-          <div v-show="props.game.publisher">Publisher: {{ props.game.publisher }}</div>
-          <div v-show="props.game.release_date">Release Date: {{ props.game.release_date }}</div>
-          <div v-show="props.game.genre">Genre: {{ props.game.genre }}</div>
-          <div v-show="props.game.platform">Platform: {{ props.game.platform }}</div>
-          <div v-show="props.game.version">Version: {{ props.game.version }}</div>
+          <QBadge color="red-4" label="No Default Action" v-if="game.actions.default === null" />
         </div>
       </QCardSection>
     </QCard>
@@ -135,8 +136,6 @@ onMounted(async () => {
 .game-card-wrapper
   flex-shrink: 0
 
-
-
 .game-card
   width: 100%
   height: 100%
@@ -144,12 +143,17 @@ onMounted(async () => {
   flex-direction: column
   aspect-ratio: 21 / 30
   cursor: pointer
-  opacity: 0.7
+  opacity: 0.8
   transition: all 0.2s ease-in-out
+  background-size: cover
+  background-position: center
+  background-repeat: no-repeat
 
   &:hover
     opacity: 1
     scale: 1.02
+    outline: 2px solid $teal
+    outline-offset: 1px
 
   & *
     cursor: pointer

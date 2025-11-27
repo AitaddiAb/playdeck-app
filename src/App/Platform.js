@@ -73,7 +73,7 @@ if (typeof window !== 'undefined') {
     // Skip Tauri callback warnings
     if (message.includes('[TAURI]') && message.includes("Couldn't find callback id")) {
       if (!console._tauri_hmr_warn) {
-        console.log('[tauri] Some async operations lost callback IDs.')
+        console.debug('[tauri] Some async operations lost callback IDs.')
         console._tauri_hmr_warn = true
       }
     } else console._warn(...args)
