@@ -56,6 +56,16 @@ The documentation includes:
 - Translation system (i18n)
 - Page-specific documentation
 
+## 🚧 Future Features & Improvements
+
+**Progress Overview:**
+
+- **High Priority**: 15 / 69 completed (21%)
+- **Medium Priority**: 1 / 42 completed (2%)
+- **Long-term**: 0 / 5 completed (0%)
+
+A comprehensive list of planned features, current work, and detailed progress tracking is available in [TODO.md](./TODO.md).
+
 ## 📝 Available Scripts
 
 - `pnpm tauri:serve` - Run Tauri app in development mode
@@ -108,3 +118,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 This project was developed with [Cursor AI Agents](https://cursor.sh/), an AI-powered code editor that enhances development productivity.
+
+---
+
+Made with ❤️ by [Abdrahim](https://abdrahim.dev/)
