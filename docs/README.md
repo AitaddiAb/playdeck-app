@@ -18,6 +18,7 @@ Welcome to the Playdeck application documentation. This documentation provides c
 
 - **[App](./App/README.md)** - Application core setup, plugins, and configuration
 - **[Utils](./Utils/README.md)** - Utility functions and helpers
+- **[Plugins](./Plugins/README.md)** - Game metadata provider plugins
 - **[Views](./Views/README.md)** - Components, layouts, and pages
 - **[Routes](./Routes/README.md)** - Route configuration
 - **[Styles](./Styles/README.md)** - Styling system
@@ -63,8 +64,14 @@ docs/
 │   └── LANGUAGE.md        # Language.js i18n system
 ├── Utils/                 # Utility functions
 │   ├── README.md          # Utils overview
+│   ├── FILE_MANAGER.md    # FileManager.js
+│   ├── IMAGE_FILENAME.md  # ImageFilename.js
 │   ├── WINDOW_CONTROL.md  # WindowControl.js
 │   └── CONTEXT_MENU.md    # ContextMenu.js
+├── Plugins/               # Metadata provider plugins
+│   ├── README.md          # Plugins overview
+│   ├── STEAM_PLUGIN_SEARCH.md    # SteamPluginSearch.js
+│   └── STEAM_PLUGIN_METADATA.md  # SteamPluginMetadata.js
 ├── Views/                 # Views documentation
 │   ├── README.md          # Views overview
 │   ├── Components/        # Individual component docs

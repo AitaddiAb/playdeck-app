@@ -156,7 +156,7 @@ When a user selects "Set as Default" from an action's submenu:
 
 - `@/Utils/ContextMenu`: Context menu utility for creating and updating menus
 - `@/Utils/FileManager`: File opening utility (`OpenFile`)
-- `@/App/Store`: 
+- `@/Stores`: 
   - `SettingsStore`: For card width (`ui_card_width`)
   - `GamesStore`: For saving game metadata (`SaveGameMetadata`) and editing state (`game_to_edit`)
 - `quasar`: QCard, QCardSection, QBadge components

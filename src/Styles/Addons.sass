@@ -38,7 +38,7 @@ $percents: (5: 0.05, 10: 0.1, 20: 0.2, 30: 0.3, 40: 0.4, 50: 0.5, 60: 0.6, 70: 0
   .rounded-#{$key}-f
     border-radius: $val !important
   .border-#{$key}
-    border: $val/16 solid $grey-3
+    border: calc(#{$val} / 16) solid $grey-3
 
 /**
  * Generate transparency and opacity utility classes

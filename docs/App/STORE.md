@@ -1,6 +1,6 @@
-# Store.js
+# Stores/index.js
 
-**Location**: `src/App/Store.js`
+**Location**: `src/Stores/index.js`
 
 **Description**: Pinia store initialization. Creates the Pinia instance and initializes all store instances for state management.
 
@@ -30,7 +30,7 @@ The following stores are initialized and exported:
 
 ```javascript
 // Import initialized store instances
-import { SettingsStore, GamesStore } from '@/App/Store.js'
+import { SettingsStore, GamesStore } from '@/Stores'
 
 // Use directly (no need to call useSettingsStore())
 SettingsStore.games_path = '/path/to/games'
@@ -43,7 +43,7 @@ const games = GamesStore.games
 ### In Vue Components
 
 ```javascript
-import { SettingsStore, GamesStore } from '@/App/Store.js'
+import { SettingsStore, GamesStore } from '@/Stores'
 import { storeToRefs } from 'pinia'
 
 // Use storeToRefs for reactive binding

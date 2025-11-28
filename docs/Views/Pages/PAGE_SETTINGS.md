@@ -52,7 +52,7 @@ Slider to adjust game card width on the dashboard (200-300 pixels, increments of
 
 ## Dependencies
 
-- `@/App/Store`: SettingsStore and GamesStore
+- `@/Stores`: SettingsStore and GamesStore
 - `@tauri-apps/plugin-dialog`: Folder picker dialog
 - `quasar`: QPage, QCard, QInput, QSlider, QBtn components
 

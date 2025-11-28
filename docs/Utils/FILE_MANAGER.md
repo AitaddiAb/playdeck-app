@@ -30,6 +30,8 @@ Provides file system operations for Tauri desktop applications. All functions us
 - Find files by extension patterns (supports multiple extensions)
 - Exclude files based on exclusion patterns
 - Recursive file search
+- Read and write text files
+- Download and save images with deterministic filenames
 - Open files with system default application
 - Case-insensitive pattern matching
 - Automatic path normalization
@@ -50,6 +52,44 @@ Read a directory and return array of subdirectory relative paths (directory name
 ```javascript
 const dirs = await ReadDir({ path: '/path/to/games' })
 // Returns: ['Game1', 'Game2', 'Game3']
+```
+
+### `ReadFile(options)`
+
+Read a text file and return its contents.
+
+**Parameters**:
+- `options` (Object): Options object
+  - `path` (string): Full path to the file to read
+
+**Returns**: `Promise<string>` - File contents as string
+
+**Throws**: Error if path is not provided or file cannot be read
+
+**Example**:
+```javascript
+const contents = await ReadFile({ path: '/path/to/file.json' })
+```
+
+### `WriteFile(options)`
+
+Write text content to a file. Creates parent directories if they don't exist.
+
+**Parameters**:
+- `options` (Object): Options object
+  - `path` (string): Full path to the file to write
+  - `contents` (string): Text content to write
+
+**Returns**: `Promise<void>`
+
+**Throws**: Error if path or contents is not provided, or if write fails
+
+**Example**:
+```javascript
+await WriteFile({
+  path: '/path/to/file.json',
+  contents: JSON.stringify(data, null, 2)
+})
 ```
 
 ### `FindFile(options)`
@@ -91,6 +131,32 @@ Open a file using the system's default application.
 **Example**:
 ```javascript
 await OpenFile({ path: '/path/to/game/game.exe' })
+```
+
+### `SaveImage(options)`
+
+Download an image from a URL and save it to a local path. Generates a deterministic filename based on key+id hash and image data (magic bytes detection for file extension).
+
+**Parameters**:
+- `options` (Object): Options object
+  - `url` (string): URL of the image to download
+  - `path` (string): Directory path where the image should be saved
+  - `key` (string): Key string (e.g., "icon", "logo") used for filename generation
+  - `id` (string|number): Identifier (e.g., 1234 or "1234") used for filename generation
+
+**Returns**: `Promise<string|null>` - Full path to the saved image file, or null if image returns 404
+
+**Throws**: Error if URL, path, key, or id is missing, or if download/save fails
+
+**Example**:
+```javascript
+const imagePath = await SaveImage({
+  url: 'https://cdn.example.com/game/logo.png',
+  path: '/path/to/game/Playdeck/',
+  key: 'logo',
+  id: '12345'
+})
+// Returns: '/path/to/game/Playdeck/abc123def456.png' (deterministic hash-based filename)
 ```
 
 ## Usage
@@ -151,8 +217,10 @@ try {
 
 ## Dependencies
 
-- `@tauri-apps/plugin-fs`: File system operations (`readDir`)
+- `@tauri-apps/plugin-fs`: File system operations (`readDir`, `readTextFile`, `writeTextFile`, `writeFile`, `mkdir`)
 - `@tauri-apps/plugin-opener`: Opening files with system default application (`openPath`)
+- `@tauri-apps/plugin-http`: HTTP requests for downloading images (`fetch`)
+- `@/Utils/ImageFilename`: Image filename generation utility (`GenerateImageFilename`)
 
 ## Related Documentation
 

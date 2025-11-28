@@ -47,7 +47,7 @@ Games are displayed as cards using the `GameCard` component. Each card shows:
 
 ## Dependencies
 
-- `@/App/Store`: SettingsStore and GamesStore
+- `@/Stores`: SettingsStore and GamesStore
 - `@/Views/Components/GameCard`: Game card component
 - `@tauri-apps/plugin-opener`: Opening files
 - `quasar`: QPage, QScrollArea, QCard components
