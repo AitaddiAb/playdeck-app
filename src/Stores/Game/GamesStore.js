@@ -8,10 +8,10 @@
  */
 
 import { defineStore } from 'pinia'
-import { convertFileSrc } from '@tauri-apps/api/core'
 import { SettingsStore } from '@/Stores'
 import { ReadDir, FindFile, SaveImage } from '@/Utils/FileManager'
 import { LoadMetadata, SaveMetadata } from '@/Utils/GameMetadata'
+import { convertFileSrc } from '@tauri-apps/api/core'
 
 export const useGamesStore = defineStore('GamesStore', {
   /**
@@ -29,6 +29,12 @@ export const useGamesStore = defineStore('GamesStore', {
     games_exclusions: () => SettingsStore.games_exclusions || null,
 
     games_sorted: (state) => state.games.sort((a, b) => a.name.localeCompare(b.name)),
+
+    image_url: () => (img) => {
+      if (!img) return ''
+      if (img.startsWith('http')) return img
+      else return convertFileSrc(img)
+    },
   },
 
   actions: {
@@ -70,7 +76,7 @@ export const useGamesStore = defineStore('GamesStore', {
         path: game.path,
         actions: {
           default: firstLevelFiles.length === 1 ? firstLevelFiles[0] : null,
-          others: [...firstLevelFiles, ...allFiles],
+          others: allFiles,
         },
       }
 
@@ -138,7 +144,7 @@ export const useGamesStore = defineStore('GamesStore', {
             }
             const full_path = await SaveImage(options)
             // Convert local file path to Tauri asset:// URL for webview compatibility
-            game.images[key] = full_path ? convertFileSrc(full_path) : null
+            game.images[key] = full_path || ''
           }
         }
 
@@ -159,4 +165,3 @@ export const useGamesStore = defineStore('GamesStore', {
     },
   },
 })
-

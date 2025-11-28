@@ -23,7 +23,7 @@ import { load as SteamSearch } from '@/Plugins/Search/SteamPluginSearch'
 import { load as SteamDetails } from '@/Plugins/Metadata/SteamPluginMetadata'
 
 // Initialize Stores
-const { game_to_edit } = storeToRefs(GamesStore)
+const { game_to_edit, image_url } = storeToRefs(GamesStore)
 const { SaveGameMetadata } = GamesStore
 
 // Dialog State
@@ -266,15 +266,15 @@ const search_actions = computed(() => [
         <div class="q-mt-sm"></div>
         <div class="row justify-center q-col-gutter-sm">
           <div class="col-6 q-gutter-y-sm">
-            <QImg :src="details_results.images?.vertical_cover" class="border-xs rounded-sm" no-spinner />
-            <QImg :src="details_results.images?.library_hero" class="border-xs rounded-sm" no-spinner />
-            <QImg :src="details_results.images?.capsule" class="border-xs rounded-sm" no-spinner />
+            <QImg :src="image_url(details_results.images?.vertical_cover)" class="border-xs rounded-sm" no-spinner />
+            <QImg :src="image_url(details_results.images?.library_hero)" class="border-xs rounded-sm" no-spinner />
+            <QImg :src="image_url(details_results.images?.capsule)" class="border-xs rounded-sm" no-spinner />
           </div>
           <div class="col-6 q-gutter-y-sm">
-            <QImg :src="details_results.images?.header" class="border-xs rounded-sm" no-spinner />
-            <QImg :src="details_results.images?.logo" class="border-xs rounded-sm" no-spinner />
-            <QImg :src="details_results.images?.background" class="border-xs rounded-sm" no-spinner />
-            <QImg :src="details_results.images?.icon" class="border-xs rounded-sm" no-spinner />
+            <QImg :src="image_url(details_results.images?.header)" class="border-xs rounded-sm" no-spinner />
+            <QImg :src="image_url(details_results.images?.logo)" class="border-xs rounded-sm" no-spinner />
+            <QImg :src="image_url(details_results.images?.background)" class="border-xs rounded-sm" no-spinner />
+            <QImg :src="image_url(details_results.images?.icon)" class="border-xs rounded-sm" no-spinner />
           </div>
         </div>
       </div>

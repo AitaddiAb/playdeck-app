@@ -16,6 +16,7 @@ import { OpenFile } from '@/Utils/FileManager'
 
 import { SettingsStore, GamesStore } from '@/Stores'
 
+const { image_url } = storeToRefs(GamesStore)
 const { ui_card_width } = storeToRefs(SettingsStore)
 const { SaveGameMetadata } = GamesStore
 /**
@@ -119,7 +120,7 @@ onMounted(async () => {
       flat
       bordered
       @dblclick="PlayDefaultAction"
-      :style="`background-image: url(${game.images?.vertical_cover})`"
+      :style="`background-image: url(${image_url(game.images?.vertical_cover)})`"
     >
       <QCardSection>
         <div class="text-h6" v-show="!game.images?.vertical_cover">{{ game.name }}</div>

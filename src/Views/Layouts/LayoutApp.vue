@@ -14,7 +14,7 @@ import AppPage from '@/Views/Components/App/AppPage.vue'
 import GameMetadataDialog from '@/Views/Components/GameMetadataDialog.vue'
 // import AppFooter from '@/Views/Components/App/AppFooter.vue'
 
-import { GamesStore } from '@/Stores'
+import { GamesStore, SettingsStore } from '@/Stores'
 import { onMounted } from 'vue'
 
 // Import global styles
@@ -22,6 +22,7 @@ import 'quasar/src/css/index.sass'
 import '@/Styles/App.sass'
 
 onMounted(() => {
+  SettingsStore.InitSettings()
   GamesStore.LoadGames()
 })
 </script>

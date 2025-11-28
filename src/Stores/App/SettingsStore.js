@@ -48,6 +48,22 @@ export const useSettingsStore = defineStore('SettingsStore', {
 
       callback()
     },
+
+    /**
+     * Initialize settings with default values
+     */
+    InitSettings({ force = false } = {}) {
+      const initialized = localStorage.getItem('playdeck_settings_initialized') === 'initialized'
+      if (initialized && !force) return false
+
+      this.games_extensions = '.exe'
+      this.games_exclusions = 'crash,PrereqSetup,vc_redist,Process'
+
+      this.SaveSettings(() => {
+        localStorage.setItem('playdeck_settings_initialized', 'initialized')
+      })
+
+      return true
+    },
   },
 })
-
