@@ -11,7 +11,7 @@
 import { createApp } from 'vue'
 
 // Import plugins and configurations
-import Store from './Store.js'
+import Store from '@/Stores'
 import Router from './Router.js'
 import Quasar from './Quasar.js'
 import Platform from './Platform.js'

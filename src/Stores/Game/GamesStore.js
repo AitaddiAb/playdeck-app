@@ -9,7 +9,7 @@
 
 import { defineStore } from 'pinia'
 import { convertFileSrc } from '@tauri-apps/api/core'
-import { SettingsStore } from '@/App/Store'
+import { SettingsStore } from '@/Stores'
 import { ReadDir, FindFile, SaveImage } from '@/Utils/FileManager'
 import { LoadMetadata, SaveMetadata } from '@/Utils/GameMetadata'
 
@@ -159,3 +159,4 @@ export const useGamesStore = defineStore('GamesStore', {
     },
   },
 })
+

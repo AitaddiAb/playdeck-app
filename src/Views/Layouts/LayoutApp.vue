@@ -14,7 +14,7 @@ import AppPage from '@/Views/Components/App/AppPage.vue'
 import GameMetadataDialog from '@/Views/Components/GameMetadataDialog.vue'
 // import AppFooter from '@/Views/Components/App/AppFooter.vue'
 
-import { GamesStore } from '@/App/Store.js'
+import { GamesStore } from '@/Stores'
 import { onMounted } from 'vue'
 
 // Import global styles

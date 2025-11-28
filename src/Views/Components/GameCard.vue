@@ -14,8 +14,7 @@ import { storeToRefs } from 'pinia'
 import { ContextMenu } from '@/Utils/ContextMenu'
 import { OpenFile } from '@/Utils/FileManager'
 
-import { SettingsStore } from '@/App/Store.js'
-import { GamesStore } from '@/App/Store.js'
+import { SettingsStore, GamesStore } from '@/Stores'
 
 const { ui_card_width } = storeToRefs(SettingsStore)
 const { SaveGameMetadata } = GamesStore

@@ -16,7 +16,7 @@ import { ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 
 // Import Stores
-import { GamesStore } from '@/App/Store.js'
+import { GamesStore } from '@/Stores'
 
 // Import Plugins
 import { load as SteamSearch } from '@/Plugins/Search/SteamPluginSearch'

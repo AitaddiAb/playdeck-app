@@ -11,7 +11,7 @@ import GameCard from '@/Views/Components/GameCard.vue'
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 
-import { SettingsStore, GamesStore } from '@/App/Store.js'
+import { SettingsStore, GamesStore } from '@/Stores'
 
 const { games_path } = storeToRefs(SettingsStore)
 const { games_sorted } = storeToRefs(GamesStore)

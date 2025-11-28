@@ -50,3 +50,4 @@ export const useSettingsStore = defineStore('SettingsStore', {
     },
   },
 })
+

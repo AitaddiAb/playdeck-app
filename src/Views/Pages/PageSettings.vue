@@ -7,7 +7,7 @@
  * @component PageSettings
  */
 
-import { SettingsStore, GamesStore } from '@/App/Store.js'
+import { SettingsStore, GamesStore } from '@/Stores'
 import { open } from '@tauri-apps/plugin-dialog'
 import { storeToRefs } from 'pinia'
 
