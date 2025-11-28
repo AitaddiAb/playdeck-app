@@ -15,7 +15,7 @@
 
 ## Overview
 
-The plugin system allows PlayDeck to fetch game metadata from multiple sources. Each plugin is split into two parts:
+The plugin system allows Playdeck to fetch game metadata from multiple sources. Each plugin is split into two parts:
 
 1. **Search Plugin** (`Search/`) - Searches for games by name
 2. **Metadata Plugin** (`Metadata/`) - Fetches detailed metadata for a specific game

@@ -49,7 +49,7 @@ export const load = async ({ app_id, lang = 'english', cc = 'US' }) => {
   // Validate game data
   if (!game_data) throw { message: 'App not found or invalid data', data }
 
-  // Map Steam API response to PlayDeck metadata format
+  // Map Steam API response to Playdeck metadata format
   const game = {
     id: game_data.steam_appid.toString(),
     name: game_data.name,

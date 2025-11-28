@@ -28,7 +28,7 @@ Fetch detailed game metadata from Steam Store API.
 - `lang` (string, optional): Language code (default: 'english')
 - `cc` (string, optional): Country code (default: 'US')
 
-**Returns**: `Promise<Object>` - Game metadata object in PlayDeck format:
+**Returns**: `Promise<Object>` - Game metadata object in Playdeck format:
 ```javascript
 {
   id: string,                    // Steam app ID

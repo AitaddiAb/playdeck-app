@@ -1,6 +1,6 @@
-# TODO - PlayDeck Game Launcher
+# TODO - Playdeck Game Launcher
 
-Future features and improvements for the PlayDeck game launcher.
+Future features and improvements for the Playdeck game launcher.
 
 ## 📊 Progress Tracking
 
@@ -41,7 +41,7 @@ Future features and improvements for the PlayDeck game launcher.
 | ☑️  | **Manual Installation Marking**: Allow users to manually mark games as installed or uninstalled                                                                                              |
 | ☑️  | **Game Search**: Allow users to search for games (within library or external search)                                                                                                         |
 | ☑️  | **Support Multiple Game Directories**: Allow users to add multiple game folders and scan all of them                                                                                         |
-| ☑️  | **Metadata Path Configuration**: Change games metadata path to PlayDeck appdata (default) or allow user-configurable folder                                                                  |
+| ☑️  | **Metadata Path Configuration**: Change games metadata path to Playdeck appdata (default) or allow user-configurable folder                                                                  |
 | ☑️  | **Metadata Validation**: Validate metadata.json before adding game to library                                                                                                                |
 | ☑️  | **New Game Detection Option**: Add user option to detect new games in configured game directories                                                                                            |
 | ☑️  | **Game Collections/Playlists**: Create custom collections to organize games (e.g., "Favorites", "Recently Played", "Action Games")                                                           |
@@ -122,7 +122,7 @@ Future features and improvements for the PlayDeck game launcher.
 
 | 📋  | Description                                                                      |
 | --- | -------------------------------------------------------------------------------- |
-| ☑️  | **PlayDeck Icon and Logo**: Design and implement custom PlayDeck icon and logo   |
+| ☑️  | **Playdeck Icon and Logo**: Design and implement custom Playdeck icon and logo   |
 | ☑️  | **macOS DMG Background**: Create custom background image for macOS DMG installer |
 
 ## 🔧 Functionality & Features
@@ -160,7 +160,7 @@ Future features and improvements for the PlayDeck game launcher.
 | ✅  | **Windows Support**: Desktop application for Windows with Tauri _(x86_64-pc-windows-gnu build target implemented)_                            |
 | ✅  | **macOS Support**: Desktop application for macOS with Tauri _(x86_64-apple-darwin build target implemented)_                                  |
 | ✅  | **Platform Detection**: Detect current platform (Windows, macOS, Linux, browser) with platform-specific utilities _(Platform.js implemented)_ |
-| ☑️  | **Code Signing**: Sign PlayDeck executable after build for secure distribution (Windows and macOS)                                            |
+| ☑️  | **Code Signing**: Sign Playdeck executable after build for secure distribution (Windows and macOS)                                            |
 | ☑️  | **Linux Support**: Add Linux build target and test compatibility                                                                              |
 | ☑️  | **Auto-updater**: Implement automatic application updates                                                                                     |
 | ☑️  | **Steam Integration**: Direct integration with Steam library (if API available)                                                               |
