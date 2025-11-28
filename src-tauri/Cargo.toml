@@ -1,10 +1,10 @@
 [package]
 name = "app"
 version = "0.0.1"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
+description = "A modern, cross-platform game launcher built with Vue 3, Quasar, and Tauri"
+authors = ["Abderrahim Ait Addi <https://abdrahim.dev>"]
+license = "MIT"
+repository = "https://github.com/aitaddiab/playdeck-app"
 edition = "2021"
 rust-version = "1.77.2"
 

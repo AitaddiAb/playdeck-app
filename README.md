@@ -8,6 +8,11 @@ A modern, cross-platform game launcher built with Vue 3, Quasar, and Tauri.
 - **Modern Stack**: Built with Vue 3, Quasar UI, and Tauri
 - **Fast & Lightweight**: Native performance with web technologies
 - **Beautiful UI**: Modern, responsive interface with Quasar components
+- **Game Management**: Discover, organize, and launch games from your library
+- **Metadata Integration**: Fetch game metadata from Steam API
+- **Customizable**: Adjustable card sizes and exclusion patterns
+- **Context Menus**: Right-click support for quick actions
+- **Image Management**: Automatic image downloading and caching
 
 ## 📋 Prerequisites
 

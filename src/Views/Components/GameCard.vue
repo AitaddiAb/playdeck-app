@@ -50,30 +50,6 @@ const cardContextMenuItems = computed(() => [
     enabled: props.game.actions.default !== null,
   },
   {
-    id: `item-3-${props.game.id}`,
-    label: `Context Menu Item 3`,
-    action: () => console.log('Context Menu Item 2'),
-    enabled: false,
-  },
-  {
-    id: `item-4-${props.game.id}`,
-    label: `Context Menu Item 4`,
-    action: () => console.log('Context Menu Item 3'),
-    enabled: false,
-  },
-  {
-    id: `item-5-${props.game.id}`,
-    label: `Context Menu Item 5`,
-    action: () => console.log('Context Menu Item 3'),
-    enabled: false,
-  },
-  {
-    id: `item-6-${props.game.id}`,
-    label: `Context Menu Item 6`,
-    action: () => console.log('Context Menu Item 3'),
-    enabled: false,
-  },
-  {
     type: 'Separator',
   },
   {
@@ -90,7 +66,7 @@ const cardContextMenuItems = computed(() => [
       items: [
         {
           id: `play-${props.game.id}-${index}`,
-          label: 'Play',
+          label: 'Run',
           action: () => OpenFile({ path: `${props.game.path}/${file_path}` }),
         },
         {
