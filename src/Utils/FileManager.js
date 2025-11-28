@@ -263,12 +263,14 @@ export const OpenFile = async (options) => {
 
 /**
  * Download an image from a URL and save it to a local path
+ * Generates a deterministic filename based on key+id hash and image data (magic bytes detection)
  * @param {Object} options - Options object
  * @param {string} options.url - URL of the image to download
  * @param {string} options.path - Directory path where the image should be saved
- * @param {string} options.key - Key string (e.g., "icon", "logo")
- * @param {string|number} options.id - Identifier (e.g., 1234 or "1234")
- * @returns {Promise<string>} Full path to the saved image file
+ * @param {string} options.key - Key string (e.g., "icon", "logo") used for filename generation
+ * @param {string|number} options.id - Identifier (e.g., 1234 or "1234") used for filename generation
+ * @returns {Promise<string|null>} Full path to the saved image file, or null if image returns 404
+ * @throws {Error} If URL, path, key, or id is missing, or if download/save fails
  */
 export const SaveImage = async (options) => {
   const { url, path: dirPath, key, id } = options || {}
@@ -283,13 +285,13 @@ export const SaveImage = async (options) => {
     const response = await fetch(url, { method: 'GET' })
 
     if (response.status === 404) return null
-    if (!response.ok) throw new { message: 'Failed to fetch image', response }()
+    if (!response.ok) throw { message: 'Failed to fetch image', response }
 
     // Get image data as array buffer
     const arrayBuffer = await response.arrayBuffer()
     const uint8Array = new Uint8Array(arrayBuffer)
 
-    // Generate filename from key+id and image data
+    // Generate deterministic filename from key+id hash and image data (magic bytes detection)
     const hashInput = `${key}${id}`
     const filename = GenerateImageFilename(hashInput, arrayBuffer)
 

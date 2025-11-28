@@ -9,6 +9,7 @@
 
 import { fetch } from '@tauri-apps/plugin-http'
 
+/** @constant {string} Steam Store Search API endpoint */
 const STEAM_STORE_SEARCH_API = 'https://store.steampowered.com/api/storesearch'
 
 /**

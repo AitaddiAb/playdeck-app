@@ -81,6 +81,11 @@ export const useGamesStore = defineStore('GamesStore', {
       return metadata
     },
 
+    /**
+     * Load all games from the games directory
+     * Scans the games folder, loads existing metadata, or creates new metadata for games without it
+     * @returns {Promise<void>}
+     */
     async LoadGames() {
       this.games = []
       const dir_options = { path: this.games_path }
@@ -112,11 +117,17 @@ export const useGamesStore = defineStore('GamesStore', {
       this.games = results.filter((game) => game !== null)
     },
 
+    /**
+     * Save game metadata and download images from URLs
+     * Downloads all HTTP image URLs, saves them locally, and converts paths to Tauri asset URLs
+     * @param {Object} game - Game object with path, id, and images properties
+     * @returns {Promise<boolean>} True if save was successful, false otherwise
+     */
     async SaveGameMetadata(game) {
       if (!game || !game.path) return false
 
       try {
-        // Save images one by one sequentially
+        // Save images one by one sequentially (ensures all images are downloaded before saving metadata)
         for (const key of Object.keys(game.images)) {
           if (game.images[key] && game.images[key].startsWith('http')) {
             const options = {
@@ -126,17 +137,18 @@ export const useGamesStore = defineStore('GamesStore', {
               id: game.id.toString(),
             }
             const full_path = await SaveImage(options)
+            // Convert local file path to Tauri asset:// URL for webview compatibility
             game.images[key] = full_path ? convertFileSrc(full_path) : null
           }
         }
 
-        // Now save metadata after all images are saved
+        // Save metadata after all images are downloaded and saved
         await SaveMetadata(game)
 
+        // Update game in games array
         const index = this.games.findIndex((g) => g.id === game.id)
         if (index === -1) return false
 
-        // Update game object in games array
         this.games[index] = game
 
         return true
