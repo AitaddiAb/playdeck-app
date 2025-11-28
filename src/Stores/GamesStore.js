@@ -8,8 +8,9 @@
  */
 
 import { defineStore } from 'pinia'
+import { convertFileSrc } from '@tauri-apps/api/core'
 import { SettingsStore } from '@/App/Store'
-import { ReadDir, FindFile } from '@/Utils/FileManager'
+import { ReadDir, FindFile, SaveImage } from '@/Utils/FileManager'
 import { LoadMetadata, SaveMetadata } from '@/Utils/GameMetadata'
 
 export const useGamesStore = defineStore('GamesStore', {
@@ -115,6 +116,21 @@ export const useGamesStore = defineStore('GamesStore', {
       if (!game || !game.path) return false
 
       try {
+        // Save images one by one sequentially
+        for (const key of Object.keys(game.images)) {
+          if (game.images[key] && game.images[key].startsWith('http')) {
+            const options = {
+              url: game.images[key],
+              path: `${game.path}/Playdeck/`,
+              key: key.toLowerCase(),
+              id: game.id.toString(),
+            }
+            const full_path = await SaveImage(options)
+            game.images[key] = full_path ? convertFileSrc(full_path) : null
+          }
+        }
+
+        // Now save metadata after all images are saved
         await SaveMetadata(game)
 
         const index = this.games.findIndex((g) => g.id === game.id)

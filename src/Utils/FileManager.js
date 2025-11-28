@@ -6,8 +6,10 @@
  * @module FileManager
  */
 
-import { readDir, readTextFile, writeTextFile, mkdir } from '@tauri-apps/plugin-fs'
+import { readDir, readTextFile, writeTextFile, writeFile, mkdir } from '@tauri-apps/plugin-fs'
 import { openPath } from '@tauri-apps/plugin-opener'
+import { fetch } from '@tauri-apps/plugin-http'
+import { GenerateImageFilename } from '@/Utils/ImageFilename'
 
 /**
  * Read directory and return array of subdirectory relative paths
@@ -255,6 +257,52 @@ export const OpenFile = async (options) => {
     await openPath(path)
   } catch (error) {
     console.error(`Error opening file ${path}:`, error)
+    throw error
+  }
+}
+
+/**
+ * Download an image from a URL and save it to a local path
+ * @param {Object} options - Options object
+ * @param {string} options.url - URL of the image to download
+ * @param {string} options.path - Directory path where the image should be saved
+ * @param {string} options.key - Key string (e.g., "icon", "logo")
+ * @param {string|number} options.id - Identifier (e.g., 1234 or "1234")
+ * @returns {Promise<string>} Full path to the saved image file
+ */
+export const SaveImage = async (options) => {
+  const { url, path: dirPath, key, id } = options || {}
+
+  if (!url) throw new Error('URL is required to save image')
+  if (!dirPath) throw new Error('Path is required to save image')
+  if (!key) throw new Error('Key is required to save image')
+  if (!id) throw new Error('ID is required to save image')
+
+  try {
+    // Fetch image from URL first
+    const response = await fetch(url, { method: 'GET' })
+
+    if (response.status === 404) return null
+    if (!response.ok) throw new { message: 'Failed to fetch image', response }()
+
+    // Get image data as array buffer
+    const arrayBuffer = await response.arrayBuffer()
+    const uint8Array = new Uint8Array(arrayBuffer)
+
+    // Generate filename from key+id and image data
+    const hashInput = `${key}${id}`
+    const filename = GenerateImageFilename(hashInput, arrayBuffer)
+
+    // Construct full file path
+    const separator = dirPath.endsWith('/') || dirPath.endsWith('\\') ? '' : '/'
+    const fullPath = `${dirPath}${separator}${filename}`
+
+    // Write binary data to file
+    await writeFile(fullPath, uint8Array)
+
+    return fullPath
+  } catch (error) {
+    console.error(`Error saving image from ${url} to ${dirPath}:`, error)
     throw error
   }
 }

@@ -41,7 +41,8 @@ const main_dialog = computed({
 // Loading States
 const is_search_loading = ref(false)
 const is_details_loading = ref(false)
-const is_loading = computed(() => is_search_loading.value || is_details_loading.value)
+const is_saving = ref(false)
+const is_loading = computed(() => is_search_loading.value || is_details_loading.value || is_saving.value)
 const game_name = computed(() => game_to_edit.value?.name || '')
 
 // Data Results
@@ -93,11 +94,14 @@ const loadDetails = async (app_id) => {
 
 // Save Metadata
 const saveMetadata = async () => {
+  is_saving.value = true
   try {
     const result = await SaveGameMetadata(details_results.value)
     if (result) main_dialog.value = false
   } catch (err) {
     console.error(err)
+  } finally {
+    is_saving.value = false
   }
 }
 
@@ -124,6 +128,7 @@ const main_actions = computed(() => [
     label: 'Save',
     color: 'primary',
     unelevated: true,
+    loading: is_saving.value,
     disabled: is_loading.value,
     action: saveMetadata,
   },
