@@ -38,7 +38,7 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["dmg", "nsis"],
+    "targets": ["dmg", "nsis", "deb", "rpm"],
     "windows": {
       "webviewInstallMode": {
         "type": "embedBootstrapper"

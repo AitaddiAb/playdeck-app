@@ -1,0 +1,104 @@
+name: 'Build macOS Release'
+
+on:
+  push:
+    branches:
+      - release
+
+# This workflow builds the Playdeck app for macOS and creates/updates a GitHub Release
+# with the built artifacts. This workflow is triggered on push to the release branch.
+# This version includes caching for faster subsequent builds.
+
+jobs:
+  build-macos:
+    permissions:
+      contents: write
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Get pnpm store directory
+        shell: bash
+        id: pnpm-cache-dir-path
+        run: |
+          pnpmPath=$(pnpm store path)
+          echo "STORE_PATH=$pnpmPath" >> $GITHUB_OUTPUT
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache-dir-path.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-cache
+          restore-keys: ${{ runner.os }}-pnpm-store-cache
+
+      - name: Get Rust directories
+        shell: bash
+        id: rust-dirs
+        run: |
+          cargoHome="${CARGO_HOME:-$HOME/.cargo}"
+          rustupHome="${RUSTUP_HOME:-$HOME/.rustup}"
+          echo "CARGO_HOME=$cargoHome" >> $GITHUB_OUTPUT
+          echo "RUSTUP_HOME=$rustupHome" >> $GITHUB_OUTPUT
+
+      - name: Cache Rust toolchain
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.rust-dirs.outputs.RUSTUP_HOME }}
+          key: ${{ runner.os }}-rustup-toolchain-cache
+          restore-keys: ${{ runner.os }}-rustup-toolchain-cache
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin,aarch64-apple-darwin
+
+      - name: Cache Cargo dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ steps.rust-dirs.outputs.CARGO_HOME }}/bin/
+            ${{ steps.rust-dirs.outputs.CARGO_HOME }}/registry/index/
+            ${{ steps.rust-dirs.outputs.CARGO_HOME }}/registry/cache/
+            ${{ steps.rust-dirs.outputs.CARGO_HOME }}/git/db/
+            src-tauri/target/
+          key: ${{ runner.os }}-cargo-dependencies-cache
+          restore-keys: ${{ runner.os }}-cargo-dependencies-cache
+
+      - name: Install frontend dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build for x86_64
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__
+          releaseName: 'Playdeck v__VERSION__'
+          releaseBody: 'See the assets to download this version and install.'
+          releaseDraft: false
+          prerelease: false
+          assetNamePattern: 'Playdeck_[version]_MacOS_amd64[ext]'
+          args: --target x86_64-apple-darwin
+
+      - name: Build for aarch64
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__
+          releaseName: 'Playdeck v__VERSION__'
+          releaseBody: 'See the assets to download this version and install.'
+          releaseDraft: false
+          prerelease: false
+          assetNamePattern: 'Playdeck_[version]_MacOS_arm64[ext]'
+          args: --target aarch64-apple-darwin

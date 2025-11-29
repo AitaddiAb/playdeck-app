@@ -1,0 +1,104 @@
+name: 'Build Windows Release'
+
+on:
+  push:
+    branches:
+      - release
+
+# This workflow builds the Playdeck app for Windows and creates/updates a GitHub Release
+# with the built artifacts. This workflow is triggered on push to the release branch.
+# This version includes caching for faster subsequent builds.
+
+jobs:
+  build-windows:
+    permissions:
+      contents: write
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Get pnpm store directory
+        shell: pwsh
+        id: pnpm-cache-dir-path
+        run: |
+          $pnpmPath = pnpm store path
+          echo "STORE_PATH=$pnpmPath" >> $env:GITHUB_OUTPUT
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache-dir-path.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-cache
+          restore-keys: ${{ runner.os }}-pnpm-store-cache
+
+      - name: Get Rust directories
+        shell: pwsh
+        id: rust-dirs
+        run: |
+          $cargoHome = if ($env:CARGO_HOME) { $env:CARGO_HOME } else { "$env:USERPROFILE\.cargo" }
+          $rustupHome = if ($env:RUSTUP_HOME) { $env:RUSTUP_HOME } else { "$env:USERPROFILE\.rustup" }
+          echo "CARGO_HOME=$cargoHome" >> $env:GITHUB_OUTPUT
+          echo "RUSTUP_HOME=$rustupHome" >> $env:GITHUB_OUTPUT
+
+      - name: Cache Rust toolchain
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.rust-dirs.outputs.RUSTUP_HOME }}
+          key: ${{ runner.os }}-rustup-toolchain-cache
+          restore-keys: ${{ runner.os }}-rustup-toolchain-cache
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc,aarch64-pc-windows-msvc
+
+      - name: Cache Cargo dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ steps.rust-dirs.outputs.CARGO_HOME }}/bin/
+            ${{ steps.rust-dirs.outputs.CARGO_HOME }}/registry/index/
+            ${{ steps.rust-dirs.outputs.CARGO_HOME }}/registry/cache/
+            ${{ steps.rust-dirs.outputs.CARGO_HOME }}/git/db/
+            src-tauri/target/
+          key: ${{ runner.os }}-cargo-dependencies-cache
+          restore-keys: ${{ runner.os }}-cargo-dependencies-cache
+
+      - name: Install frontend dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build for x86_64
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__
+          releaseName: 'Playdeck v__VERSION__'
+          releaseBody: 'See the assets to download this version and install.'
+          releaseDraft: false
+          prerelease: false
+          assetNamePattern: 'Playdeck_[version]_Windows_amd64[ext]'
+          args: --target x86_64-pc-windows-msvc
+
+      - name: Build for aarch64
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__
+          releaseName: 'Playdeck v__VERSION__'
+          releaseBody: 'See the assets to download this version and install.'
+          releaseDraft: false
+          prerelease: false
+          assetNamePattern: 'Playdeck_[version]_Windows_arm64[ext]'
+          args: --target aarch64-pc-windows-msvc
