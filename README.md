@@ -4,7 +4,7 @@ A modern, cross-platform game launcher built with Vue 3, Quasar, and Tauri.
 
 ## 🚀 Features
 
-- **Cross-platform**: Desktop application for Windows and macOS
+- **Cross-platform**: Desktop application for Windows, MacOS, and Linux
 - **Modern Stack**: Built with Vue 3, Quasar UI, and Tauri
 - **Fast & Lightweight**: Native performance with web technologies
 - **Beautiful UI**: Modern, responsive interface with Quasar components
@@ -14,49 +14,27 @@ A modern, cross-platform game launcher built with Vue 3, Quasar, and Tauri.
 - **Context Menus**: Right-click support for quick actions
 - **Image Management**: Automatic image downloading and caching
 
-## 📋 Prerequisites
+## ⬇️ Download & Install
 
-- Node.js `^20.19.0` or `>=22.12.0`
-- pnpm (recommended) or npm/yarn
-- Rust (for Tauri builds)
+Playdeck is available for **Windows**, **MacOS**, and **Linux**. Download the latest release from the [GitHub Releases](https://github.com/aitaddiab/playdeck-app/releases) page.
 
-## 🛠️ Installation
+### Installation Notes
 
-```bash
-git clone https://github.com/aitaddiab/playdeck-app.git
-cd playdeck-app
-pnpm install
-```
+#### Windows
 
-## 🏃 Development
+You may see a warning about potentially dangerous software while downloading and installing. This is because the application is not code-signed yet. **Don't worry, it's safe to use.** You can safely proceed with the installation by clicking "More info" and then "Run anyway" when prompted.
+
+#### MacOS
+
+If the application won't open and the system says it's damaged, this is because the application is not code-signed yet. To allow it to run, open Terminal and run the following command:
 
 ```bash
-# Run in Development Mode
-# Tauri desktop app (with hot reload)
-pnpm tauri:serve
-
-# Build for Production
-# Build Tauri desktop app
-pnpm tauri:build:mac    # macOS
-pnpm tauri:build:win    # Windows
-
-## Debug Builds
-pnpm tauri:debug:mac    # macOS debug build
-pnpm tauri:debug:win    # Windows debug build
+sudo xattr -dr com.apple.quarantine /Applications/Playdeck.app
 ```
 
-## 📚 Documentation
+This command removes the quarantine attribute that MacOS applies to unsigned applications, allowing Playdeck to run normally.
 
-**Contributor documentation** is available in the `docs/` directory. See [docs/README.md](./docs/README.md) for the complete documentation index.
-
-The documentation includes:
-
-- Application architecture and structure
-- Component library and patterns
-- Translation system (i18n)
-- Page-specific documentation
-
-## 🚧 Future Features & Improvements
+## 🚧 Planned Features & Improvements
 
 **Progress Overview:**
 
@@ -66,33 +44,43 @@ The documentation includes:
 
 A comprehensive list of planned features, current work, and detailed progress tracking is available in [TODO.md](./TODO.md).
 
-## 📝 Available Scripts
+## 🛠️ Development
+
+### 📋 Prerequisites
+
+- Node.js `^20.19.0` or `>=22.12.0`
+- pnpm (recommended) or npm/yarn
+- Rust (for Tauri builds)
+
+### ⬇️ Clone Project
+
+```bash
+git clone https://github.com/aitaddiab/playdeck-app.git
+cd playdeck-app
+pnpm install
+```
+
+### 📝 Available Scripts
 
 - `pnpm tauri:serve` - Run Tauri app in development mode
-- `pnpm tauri:build:mac` - Build Tauri app for macOS
+- `pnpm tauri:build:mac` - Build Tauri app for MacOS
 - `pnpm tauri:build:win` - Build Tauri app for Windows
-- `pnpm tauri:debug:mac` - Build debug version for macOS
+- `pnpm tauri:debug:mac` - Build debug version for MacOS
 - `pnpm tauri:debug:win` - Build debug version for Windows
 - `pnpm lint` - Run ESLint
 - `pnpm format` - Format code with Prettier
 
-## 🏗️ Project Structure
+### 📚 Documentation
 
-```
-src/
-├── App/              # Core application setup and plugins
-├── Assets/           # Static assets (images, fonts, etc.)
-├── Langs/            # Translation files (i18n)
-├── Routes/           # Route definitions
-├── Stores/           # State management (Pinia)
-├── Styles/           # Styling files (SASS)
-├── Utils/            # Utility functions (WindowControl, ContextMenu)
-└── Views/            # Components, layouts, pages
-    ├── Components/   # Reusable components
-    │   └── App/      # App-specific components (Header, Sidebar, Page, Footer)
-    ├── Layouts/      # Layout components
-    └── Pages/        # Page components
-```
+**Contributor documentation** is available in the `docs/` directory. See [docs/README.md](./docs/README.md) for the complete documentation index.
+
+The documentation includes:
+
+- Application architecture and structure
+- Component library and patterns
+- Translation system (i18n)
+- Page-specific documentation
+- Project structure
 
 ## 🤝 Contributing
 
